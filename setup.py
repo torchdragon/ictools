@@ -38,6 +38,7 @@ setuptools.setup(
     entry_points={
         'console_scripts': [
             'scan-hipchat-room = ictools.hipchat:scan_room',
+            'list-pagerduty-incidents = ictools.pagerduty:list_incidents',
         ],
     },
 )
