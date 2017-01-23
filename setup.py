@@ -31,6 +31,7 @@ setuptools.setup(
     description='Incident Commander Utilities',
     version=version,
     long_description='\n'+open('README.rst').read(),
+    url='https://github.com/dave-shawley/ictools',
     author='Dave Shawley',
     author_email='daves@aweber.com',
     packages=['ictools'],
@@ -41,4 +42,10 @@ setuptools.setup(
             'list-pagerduty-incidents = ictools.pagerduty:list_incidents',
         ],
     },
+    platforms='any',
+    classifiers=['Intended Audience :: Developers',
+                 'License :: OSI Approved :: BSD License',
+                 'Operating System :: OS Independent',
+                 'Programming Language :: Python :: 3',
+                 'Development Status :: 4 - Beta'],
 )
