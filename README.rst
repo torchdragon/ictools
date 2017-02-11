@@ -13,15 +13,33 @@ list-pagerduty-incidents
 ------------------------
 ::
 
-   list-pagerduty-incidents START END
+   list-pagerduty-incidents [options] START END
 
+This utility retrieves incidents from PagerDuty for the time range and
+writes them to standard output.  The **--format** option controls the
+output format which is JSON by default.
+
+Options
+~~~~~~~
+**--format=** *json* or *confluence*
+   This optional parameter sets the format of the produced output.  The
+   default for this option is to production JSON output.
+
+**--verbose**, **-v**
+   Increases the diagnostic verbosity.  By default, errors and warnings are
+   displayed.  This option can be specified multiple times for increased
+   effect.
+
+**--quiet**, **-q**
+   This option disables all diagnostic output.
+
+Parameters
+~~~~~~~~~~
 **START**
-   The earliest time to fetch messages from.  IOW, the starting date.
+   The starting date for the range of incidents to retrieve.
 
 **END**
-   The latest time to fetch messages from.  IOW, the ending date.
-
-This utility writes the JSON formatted messages to the standard output stream.
+   The ending date for the range of incidents to retrieve.
 
 
 .. _scan_hipchat_room:
@@ -30,18 +48,49 @@ scan-hipchat-room
 -----------------
 ::
 
-   scan-hipchat-room START END ROOM [ROOM...]
+   scan-hipchat-room [options] START END ROOM [ROOM...]
 
+This utility retrieves messages from one or more HipChat rooms for
+the given time range.  The **--format** option controls the output
+format which defaults to JSON.
+
+Options
+~~~~~~~
+**--format=** *json* or *confluence*
+   This optional parameter sets the format of the produced output.  The
+   default for this option is to production JSON output.
+
+**--verbose**, **-v**
+   Increases the diagnostic verbosity.  By default, errors and warnings are
+   displayed.  This option can be specified multiple times for increased
+   effect.
+
+**--quiet**, **-q**
+   This option disables all diagnostic output.
+
+Parameters
+~~~~~~~~~~
 **START**
-   The earliest time to fetch messages from.  IOW, the starting date.
+   The starting date for the range of messages to retrieve.
 
 **END**
-   The latest time to fetch messages from.  IOW, the ending date.
+   The ending date for the range of messages to retrieve.
 
 **ROOM**
    One or more room names to fetch messages from.
 
-This utility writes the JSON formatted messages to the standard output stream.
+
+.. _create_confluence_table:
+
+create-confluence-table
+-----------------------
+::
+
+   create-confluence-table
+
+This utility reads the "confluence" formatted output from other commands
+as its standard input.  It parses the timestamp, sorts the rows based on
+the timestamp, and prints them to the standard output stream.
 
 
 Environment Variables
@@ -58,15 +107,3 @@ API token to use when talking to the `pagerduty API`_.
 .. _HipChat API: https://developer.atlassian.com/hipchat/guide/hipchat-rest-api
 .. _pagerduty API: https://v2.developer.pagerduty.com/v2/page/api-reference
    #!/Incidents/get_incidents
-
-
-Release History
-===============
-
-`0.1.0`_ (23-Jan-2017)
-----------------------
-* add :ref:`scan_hipchat_room` utility
-* add :ref:`list_pagerduty_incidents` utility
-
-.. _Next Release: https://github.com/dave-shawley/ictools/compare/0.1.0...HEAD
-.. _0.1.0: https://github.com/dave-shawley/ictools/compare/0.0.0...0.1.0
