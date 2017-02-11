@@ -1,12 +1,10 @@
+import argparse
 import logging
-import json
-import os
-import pathlib
 import sys
 
 import maya
 import requests
-from ictools import auth, cli, io
+from ictools import auth, cli, io, version
 
 
 _logger = logging.getLogger(__name__)
@@ -24,12 +22,11 @@ class Connection(object):
         response.raise_for_status()
 
     def fetch_incidents_between(self, start, end):
-        self.logger.info('fetching messages between %s and %s',
-                         start.isoformat(), end.isoformat())
+        start = start.datetime().isoformat()
+        end = end.datetime().isoformat()
+        self.logger.info('fetching messages between %s and %s', start, end)
 
-        params = {'since': start.isoformat(),
-                  'until': end.isoformat(),
-                  'limit': '100'}
+        params = {'since': start, 'until': end, 'limit': '100'}
         incidents = []
 
         response = self.session.get('https://api.pagerduty.com/incidents',
@@ -60,18 +57,20 @@ def _augment_incidents(incidents):
 
 
 def list_incidents():
-    logger = _logger.getChild('list_incidents')
     cli.configure_logging()
+    logger = _logger.getChild('list_incidents')
     api_token = cli.require_environment(logger, 'PAGERDUTY_TOKEN')
 
-    if len(sys.argv) < 2:
-        prog_name = pathlib.Path(sys.argv[0]).stem
-        sys.stderr.write('Usage: {} START END\n'.format(prog_name))
-        sys.exit(os.EX_USAGE)
+    parser = argparse.ArgumentParser(
+        description='Retrieve incidents from PagerDuty')
+    parser.add_argument('--version', action='version', version=version)
+    parser.add_argument('start_date', metavar='START', type=maya.parse,
+                        help='earliest timestamp to retrieve incidents from')
+    parser.add_argument('end_date', metavar='END', type=maya.parse,
+                        help='latest timestamp to retrieve incidents from')
+    args = parser.parse_args()
 
     conn = Connection(api_token)
-    start = maya.parse(sys.argv[1]).datetime()
-    end = maya.parse(sys.argv[2]).datetime()
-    incidents = conn.fetch_incidents_between(start, end)
+    incidents = conn.fetch_incidents_between(args.start_date, args.end_date)
     logger.info('found %d messages', len(incidents))
     io.dump(incidents, sys.stdout)
