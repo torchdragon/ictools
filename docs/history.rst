@@ -9,6 +9,7 @@ Release History
 * added ``--format`` command line option.
 * added ``--quiet`` and ``--verbose`` command line options.
 * changed default diagnostic level from INFO -> WARNING.
+* added :ref:`create_confluence_table` utility
 
 `0.1.0`_ (23-Jan-2017)
 ----------------------

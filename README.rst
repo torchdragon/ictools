@@ -80,6 +80,18 @@ Parameters
    One or more room names to fetch messages from.
 
 
+.. _create_confluence_table:
+
+create-confluence-table
+-----------------------
+::
+
+   create-confluence-table
+
+This utility reads the "confluence" formatted output from other commands
+as its standard input.  It parses the timestamp, sorts the rows based on
+the timestamp, and prints them to the standard output stream.
+
 
 Environment Variables
 =====================

@@ -1,7 +1,16 @@
 import datetime
 import json
+import logging
+import re
+import sys
 
 import bs4
+
+from ictools import cli
+
+
+TIME_FORMAT = '%b-%d %H:%M:%S'
+_TIME_PATTERN = r'...-\d\d \d\d:\d\d:\d\d'
 
 
 class JSONEncoder(json.JSONEncoder):
@@ -31,7 +40,7 @@ def dump_json(objects, stream):
 def write_confluence_row(when, message, source, stream):
     local_time = when.datetime(to_timezone='US/Eastern')
     stream.write('| {when} | {message} | {source} |\n'.format(
-        when=local_time.strftime('%b-%d %H:%M:%S'),
+        when=local_time.strftime(TIME_FORMAT),
         message=html_to_confluence(message),
         source=html_to_confluence(source)))
 
@@ -41,3 +50,22 @@ def html_to_confluence(s):
     for anchor in soup.find_all('a'):
         anchor.replace_with('[{}|{}]'.format(anchor.string, anchor['href']))
     return soup.text
+
+
+def combine_tables():
+    cli.configure_logging()
+    logger = logging.getLogger('combine_tables')
+
+    patn = re.compile(r'\| (?P<timestamp>' + _TIME_PATTERN + r') \|')
+    lines = []
+    for line in sys.stdin:
+        m = patn.match(line)
+        if not m:
+            logger.error('failed to parse "%s"', line)
+            continue
+        timestamp = datetime.datetime.strptime(m.groupdict()['timestamp'],
+                                               TIME_FORMAT)
+        lines.append((timestamp, line))
+
+    for _, line in sorted(lines):
+        sys.stdout.write(line)
