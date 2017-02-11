@@ -4,6 +4,20 @@ Incident Command Utilities
 
 This is a simple toolkit of utilities that make my on-call life easier.
 
++---------------+-----------------------------------------+
+| Source code   | https://github.com/dave-shawley/ictools |
++---------------+-----------------------------------------+
+| Download      | https://pypi.python.org/pypi/ictools/   |
++---------------+-----------------------------------------+
+| Documentation | http://pythonhosted.org/ictools/        |
++---------------+-----------------------------------------+
+
+Installation
+============
+::
+
+   pip3 install ictools
+
 Tools
 =====
 
