@@ -58,15 +58,3 @@ API token to use when talking to the `pagerduty API`_.
 .. _HipChat API: https://developer.atlassian.com/hipchat/guide/hipchat-rest-api
 .. _pagerduty API: https://v2.developer.pagerduty.com/v2/page/api-reference
    #!/Incidents/get_incidents
-
-
-Release History
-===============
-
-`0.1.0`_ (23-Jan-2017)
-----------------------
-* add :ref:`scan_hipchat_room` utility
-* add :ref:`list_pagerduty_incidents` utility
-
-.. _Next Release: https://github.com/dave-shawley/ictools/compare/0.1.0...HEAD
-.. _0.1.0: https://github.com/dave-shawley/ictools/compare/0.0.0...0.1.0
