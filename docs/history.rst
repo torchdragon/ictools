@@ -6,6 +6,7 @@ Release History
 * added "metadata" element to all JSON output.
 * switched to using :mod:`argparse` for parsing.  The only observable effect
   of this is that ``--help`` and ``--version`` are now supported.
+* added ``--format`` command line parameter.
 
 `0.1.0`_ (23-Jan-2017)
 ----------------------

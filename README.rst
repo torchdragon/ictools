@@ -13,7 +13,7 @@ list-pagerduty-incidents
 ------------------------
 ::
 
-   list-pagerduty-incidents START END
+   list-pagerduty-incidents [--format=confluence|json] START END
 
 **START**
    The earliest time to fetch messages from.  IOW, the starting date.
@@ -21,7 +21,7 @@ list-pagerduty-incidents
 **END**
    The latest time to fetch messages from.  IOW, the ending date.
 
-This utility writes the JSON formatted messages to the standard output stream.
+This utility writes the formatted messages to the standard output stream.
 
 
 .. _scan_hipchat_room:
@@ -30,7 +30,7 @@ scan-hipchat-room
 -----------------
 ::
 
-   scan-hipchat-room START END ROOM [ROOM...]
+   scan-hipchat-room [--format=confluence|json] START END ROOM [ROOM...]
 
 **START**
    The earliest time to fetch messages from.  IOW, the starting date.
@@ -41,7 +41,7 @@ scan-hipchat-room
 **ROOM**
    One or more room names to fetch messages from.
 
-This utility writes the JSON formatted messages to the standard output stream.
+This utility writes the formatted messages to the standard output stream.
 
 
 Environment Variables

@@ -56,6 +56,8 @@ def scan_room():
     parser = argparse.ArgumentParser(
         description='Retrieve messages from HipChat')
     parser.add_argument('--version', action='version', version=version)
+    parser.add_argument('--format', dest='output_format',
+                        choices=('json', 'confluence'), default='json')
     parser.add_argument('start_date', metavar='START', type=maya.parse,
                         help='timestamp to start retrieving messages from')
     parser.add_argument('end_date', metavar='END', type=maya.parse,
@@ -72,4 +74,11 @@ def scan_room():
         messages.extend(items)
 
     logger.info('found %d messages', len(messages))
-    io.dump(messages, sys.stdout)
+    if args.output_format == 'json':
+        io.dump_json(messages, sys.stdout)
+    elif args.output_format == 'confluence':
+        for message in messages:
+            io.write_confluence_row(message['metadata']['date'],
+                                    message['message'],
+                                    '#' + message['metadata']['room'],
+                                    sys.stdout)

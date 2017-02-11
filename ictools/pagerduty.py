@@ -64,6 +64,8 @@ def list_incidents():
     parser = argparse.ArgumentParser(
         description='Retrieve incidents from PagerDuty')
     parser.add_argument('--version', action='version', version=version)
+    parser.add_argument('--format', dest='output_format',
+                        choices=('json', 'confluence'), default='json')
     parser.add_argument('start_date', metavar='START', type=maya.parse,
                         help='earliest timestamp to retrieve incidents from')
     parser.add_argument('end_date', metavar='END', type=maya.parse,
@@ -73,4 +75,11 @@ def list_incidents():
     conn = Connection(api_token)
     incidents = conn.fetch_incidents_between(args.start_date, args.end_date)
     logger.info('found %d messages', len(incidents))
-    io.dump(incidents, sys.stdout)
+    if args.output_format == 'json':
+        io.dump_json(incidents, sys.stdout)
+    elif args.output_format == 'confluence':
+        for incident in incidents:
+            link = '<a href="{}">PD#{}</a>'.format(
+                incident['metadata']['link'], incident['incident_number'])
+            io.write_confluence_row(incident['metadata']['date'],
+                                    incident['description'], link, sys.stdout)
