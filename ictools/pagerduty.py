@@ -6,7 +6,7 @@ import sys
 
 import maya
 import requests
-from ictools import auth, cli
+from ictools import auth, cli, io
 
 
 _logger = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ class Connection(object):
                                     params=params)
         response.raise_for_status()
         body = response.json()
-        incidents.extend(body['incidents'])
+        incidents.extend(_augment_incidents(body['incidents']))
         while body['more']:
             params['offset'] = body['offset'] + body['limit']
             response = self.session.get('https://api.pagerduty.com/incidents',
@@ -45,10 +45,18 @@ class Connection(object):
                                         params=params)
             response.raise_for_status()
             body = response.json()
-            incidents.extend(body['incidents'])
+            incidents.extend(_augment_incidents(body['incidents']))
 
         self.logger.debug('found %d incidents', len(incidents))
         return incidents
+
+
+def _augment_incidents(incidents):
+    for incident in incidents:
+        incident['metadata'] = {'source': 'pagerduty',
+                                'date': maya.parse(incident['created_at']),
+                                'link': incident['self']}
+    return incidents
 
 
 def list_incidents():
@@ -66,9 +74,4 @@ def list_incidents():
     end = maya.parse(sys.argv[2]).datetime()
     incidents = conn.fetch_incidents_between(start, end)
     logger.info('found %d messages', len(incidents))
-    json.dump(sorted(incidents, key=_extract_timestamp), sys.stdout,
-              sort_keys=True)
-
-
-def _extract_timestamp(incident):
-    return maya.parse(incident['created_at'])
+    io.dump(incidents, sys.stdout)

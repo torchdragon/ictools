@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 import pathlib
@@ -8,7 +7,7 @@ import urllib.parse
 import maya
 import requests
 
-from ictools import auth, cli
+from ictools import auth, cli, io
 
 
 _logger = logging.getLogger(__name__)
@@ -37,10 +36,16 @@ class Connection(object):
             self.logger.error('room %s not found', room)
             return None
         response.raise_for_status()
-        items = response.json()['items']
-        for item in items:
-            item['room'] = room
-        return items
+
+        return _augment_messages(response.json()['items'], room)
+
+
+def _augment_messages(messages, room):
+    for message in messages:
+        message['metadata'] = {'source': 'hipchat',
+                               'date': maya.parse(message['date']),
+                               'room': room}
+    return messages
 
 
 def scan_room():
@@ -64,8 +69,4 @@ def scan_room():
         messages.extend(items)
 
     logger.info('found %d messages', len(messages))
-    json.dump(sorted(messages, key=_extract_timestamp), sys.stdout)
-
-
-def _extract_timestamp(msg_data):
-    return maya.parse(msg_data['date'])
+    io.dump(messages, sys.stdout)
