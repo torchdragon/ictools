@@ -4,7 +4,7 @@ import sys
 
 import maya
 import requests
-from ictools import auth, cli, io, version
+from ictools import auth, cli, io
 
 
 _logger = logging.getLogger(__name__)
@@ -62,8 +62,8 @@ def list_incidents():
     api_token = cli.require_environment(logger, 'PAGERDUTY_TOKEN')
 
     parser = argparse.ArgumentParser(
-        description='Retrieve incidents from PagerDuty')
-    parser.add_argument('--version', action='version', version=version)
+        description='Retrieve incidents from PagerDuty',
+        parents=cli.get_parent_parsers())
     parser.add_argument('--format', dest='output_format',
                         choices=('json', 'confluence'), default='json')
     parser.add_argument('start_date', metavar='START', type=maya.parse,

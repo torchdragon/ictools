@@ -6,7 +6,7 @@ import urllib.parse
 import maya
 import requests
 
-from ictools import auth, cli, io, version
+from ictools import auth, cli, io
 
 
 _logger = logging.getLogger(__name__)
@@ -54,8 +54,8 @@ def scan_room():
     api_token = cli.require_environment(logger, 'HIPCHAT_TOKEN')
 
     parser = argparse.ArgumentParser(
-        description='Retrieve messages from HipChat')
-    parser.add_argument('--version', action='version', version=version)
+        description='Retrieve messages from HipChat',
+        parents=cli.get_parent_parsers())
     parser.add_argument('--format', dest='output_format',
                         choices=('json', 'confluence'), default='json')
     parser.add_argument('start_date', metavar='START', type=maya.parse,
