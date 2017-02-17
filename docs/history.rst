@@ -1,6 +1,10 @@
 Release History
 ===============
 
+`Next Release`_
+---------------
+* Added image support to HipChat.
+
 `0.2.0`_ (11-Feb-2017)
 ----------------------
 * added "metadata" element to all JSON output.
