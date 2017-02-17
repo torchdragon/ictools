@@ -78,7 +78,22 @@ def scan_room():
         io.dump_json(messages, sys.stdout)
     elif args.output_format == 'confluence':
         for message in messages:
-            io.write_confluence_row(message['metadata']['date'],
-                                    message['message'],
-                                    '#' + message['metadata']['room'],
-                                    sys.stdout)
+            try:
+                from_name = message['from']['name']
+            except:
+                from_name = message['from']
+
+            if message.get('message'):
+                io.write_confluence_row(
+                    message['metadata']['date'],
+                    '{}: {}'.format(from_name, message['message']),
+                    '#' + message['metadata']['room'],
+                    sys.stdout)
+            if message.get('file'):
+                io.write_confluence_row(
+                    message['metadata']['date'],
+                    '{}: [!{}!|{}]'.format(from_name,
+                                           message['file']['thumb_url'],
+                                           message['file']['url']),
+                    '#' + message['metadata']['room'],
+                    sys.stdout)
