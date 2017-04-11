@@ -5,12 +5,28 @@ import ictools.io as icio
 
 class IOTests(unittest.TestCase):
 
-    # This tests the case where the overly aggressive html parser will convert &<something> into &<something>;, which
-    # will in turn confuse the heck out of Confluence's markup parser. Our conversion library should replace the &
-    # literal values with the encoded value to prevent the aggressive replacement and maintain link functionality.
-    def test_html_to_confluence_does_not_poorly_format_urls_with_ampersand(self):
+    # Test to ensure that a raw URL is wrapped in hard braces to prevent issues with Confluence importing.
+    def test_html_to_confluence_wraps_raw_urls_with_hard_braces(self):
         expected_input = '| Apr-05 15:35:49 | Bob Builder: https://arbitrary.website.com/path?param=1&otherParam&thirdParam=foo&here=now | #CodeRed |'
-        expected_output = '| Apr-05 15:35:49 | Bob Builder: https://arbitrary.website.com/path?param=1%26otherParam%26thirdParam=foo%26here=now | #CodeRed |'
+        expected_output = '| Apr-05 15:35:49 | Bob Builder: [https://arbitrary.website.com/path?param=1&otherParam;&thirdParam;=foo&here;=now] | #CodeRed |'
+
+        output = icio.html_to_confluence(expected_input)
+
+        self.assertEquals(expected_output, output)
+
+    # Test that an already wrapped URL in braces is not re-wrapped in braces.
+    def test_html_to_confluence_does_not_double_wrap_raw_urls_with_hard_braces(self):
+        expected_input = '| Apr-05 15:35:49 | Bob Builder: [https://arbitrary.website.com/path?param=1&otherParam&thirdParam=foo&here=now] | #CodeRed |'
+        expected_output = '| Apr-05 15:35:49 | Bob Builder: [https://arbitrary.website.com/path?param=1&otherParam;&thirdParam;=foo&here;=now] | #CodeRed |'
+
+        output = icio.html_to_confluence(expected_input)
+
+        self.assertEquals(expected_output, output)
+
+    # Test that an <a> tagged url is only wrapped correctly on the outside.
+    def test_html_to_confluence_does_not_wrap_a_tags_with_hard_braces(self):
+        expected_input = '| Apr-05 15:35:49 | Bob Builder: <a href="https://arbitrary.website.com/path?param=1&otherParam&thirdParam=foo&here=now">Website Link</a> | #CodeRed |'
+        expected_output = '| Apr-05 15:35:49 | Bob Builder: [Website Link|https://arbitrary.website.com/path?param=1&otherParam&thirdParam=foo&here=now] | #CodeRed |'
 
         output = icio.html_to_confluence(expected_input)
 
