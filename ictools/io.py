@@ -50,7 +50,7 @@ def html_to_confluence(s):
     for anchor in soup.find_all('a'):
         anchor.replace_with('[{}|{}]'.format(anchor.string, anchor['href']))
 
-    url_re = re.compile(r'(?i)\b((?<!\[)(?<!\|)http.*?(?!\])(?=\s))', re.S)
+    url_re = re.compile(r'(?i)\b((?<!\[)http.*?(?!\])(?=\s|$))', re.S)
     braced = url_re.sub(lambda m: '[' + m.group() + ']', soup.text)
 
     return braced
